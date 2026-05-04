@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your SpotifyStats</title>
+  <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Syne:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green: #1DB954;
+      --green-dim: #17a349;
+      --black: #080808;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --text: #f0f0f0;
+      --muted: #666;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated background */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .bg-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.15;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .bg-blob:nth-child(1) {
+      width: 600px; height: 600px;
+      background: var(--green);
+      top: -200px; left: -100px;
+      animation-delay: 0s;
+    }
+    .bg-blob:nth-child(2) {
+      width: 400px; height: 400px;
+      background: #9b59b6;
+      bottom: -100px; right: -100px;
+      animation-delay: -4s;
+    }
+    .bg-blob:nth-child(3) {
+      width: 300px; height: 300px;
+      background: var(--green);
+      bottom: 30%; left: 40%;
+      animation-delay: -8s;
+      opacity: 0.08;
+    }
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(40px, 30px) scale(1.1); }
+    }
+
+    /* Grid overlay */
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* Layout */
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 48px;
+    }
+
+    .logo {
+      font-family: 'Clash Display', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .logo span { color: var(--green); }
+
+    .nav-tag {
+      font-size: 0.75rem;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 100px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* Hero */
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px;
+      gap: 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--green);
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.1s;
+    }
+    .eyebrow::before, .eyebrow::after {
+      content: '';
+      display: block;
+      width: 30px;
+      height: 1px;
+      background: var(--green);
+      opacity: 0.5;
+    }
+
+    h1 {
+      font-family: 'Clash Display', sans-serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.2s;
+    }
+    h1 em {
+      font-style: normal;
+      color: var(--green);
+      position: relative;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 440px;
+      line-height: 1.7;
+      margin-bottom: 52px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.35s;
+    }
+
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.5s;
+    }
+
+    .btn-login {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--green);
+      color: #000;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+      padding: 18px 40px;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      box-shadow: 0 0 40px rgba(29,185,84,0.3);
+    }
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 60px rgba(29,185,84,0.5);
+      background: #1ed760;
+    }
+    .btn-login svg { width: 20px; height: 20px; }
+
+    .cta-note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+    }
+
+    /* Features strip */
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      padding: 0 48px 80px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.65s;
+      flex-wrap: wrap;
+    }
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 32px;
+      border-right: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .feature:last-child { border-right: none; }
+    .feature-dot {
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Floating record visual */
+    .record-wrap {
+      position: fixed;
+      right: -60px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 0;
+      opacity: 0.06;
+      pointer-events: none;
+    }
+    .record {
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      border: 2px solid white;
+      position: relative;
+      animation: spin 30s linear infinite;
+    }
+    .record::before {
+      content: '';
+      position: absolute;
+      inset: 40px;
+      border-radius: 50%;
+      border: 1px solid white;
+    }
+    .record::after {
+      content: '';
+      position: absolute;
+      inset: 80px;
+      border-radius: 50%;
+      border: 1px solid white;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg">
+    <div class="bg-blob"></div>
+    <div class="bg-blob"></div>
+    <div class="bg-blob"></div>
+  </div>
+  <div class="grid-overlay"></div>
+
+  <div class="record-wrap">
+    <div class="record"></div>
+  </div>
+
+  <div class="page">
+    <nav>
+      <div class="logo">Spotify<span>Stats</span></div>
+      <div class="nav-tag">Powered by Spotify</div>
+    </nav>
+
+    <main class="hero">
+      <div class="eyebrow">Your music. Your data.</div>
+
+      <h1>Discover your<br/><em>listening</em><br/>identity.</h1>
+
+      <p class="subtitle">
+        See your top 50 tracks and artists across any time period. Instantly. No account needed — just your Spotify login.
+      </p>
+
+      <div class="cta-group">
+        <a href="/login" class="btn-login">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+          </svg>
+          Connect with Spotify
+        </a>
+        <span class="cta-note">No data stored. Sessions expire automatically.</span>
+      </div>
+    </main>
+
+    <div class="features">
+      <div class="feature"><div class="feature-dot"></div>Top 50 Tracks</div>
+      <div class="feature"><div class="feature-dot"></div>Top 50 Artists</div>
+      <div class="feature"><div class="feature-dot"></div>3 Time Ranges</div>
+      <div class="feature"><div class="feature-dot"></div>Zero Data Stored</div>
+    </div>
+  </div>
+</body>
+</html>
