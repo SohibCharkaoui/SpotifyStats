@@ -88,6 +88,10 @@ def stats():
         time_range=time_range
     )
 
+@app.route("/request-access")
+def request_access():
+    return render_template("request.html")
+
 @app.route("/logout")
 def logout():
     session.clear()
