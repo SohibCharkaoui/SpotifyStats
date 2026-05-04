@@ -21,7 +21,7 @@ A clean, public-facing web app where anyone can log in with their Spotify accoun
 
 1. Go to [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard)
 2. Click **Create App**
-3. Fill in a name (e.g. "Statify") and description
+3. Fill in a name (e.g. "SpotifyStats") and description
 4. Set **Redirect URI** to `http://localhost:5000/callback` (for local) or your deployed URL
 5. Copy your **Client ID** and **Client Secret**
 
